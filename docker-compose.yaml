@@ -2,7 +2,7 @@
 services:
   glances:
     container_name: glances
-    image: nicolargo/glances:ubuntu-latest-full
+    image: nicolargo/glances:ubuntu-latest-full@sha256:e17096f1ba0407d0589bec7976ba6ac2f1b6fea886bb090d59090c9244930eae
     restart: unless-stopped
     pid: host
     volumes:
@@ -22,7 +22,7 @@ services:
 
   dozzle:
     container_name: dozzle
-    image: amir20/dozzle:latest
+    image: amir20/dozzle:latest@sha256:0df89c904da71e94a0c9ed3c89a890f01488321b5f10ac1e0c0bedcead9af6e4
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -31,7 +31,7 @@ services:
 
   wud:
     container_name: wud
-    image: getwud/wud:latest
+    image: getwud/wud:latest@sha256:2df7cafa0fc84cdd66ad976163abc5390fa5995e0b5788a90e6a5303706bc21a
     restart: unless-stopped
     environment:
       - TZ=${TZ}
@@ -46,7 +46,7 @@ services:
 ### DASHBOARD
   heimdall:
     container_name: heimdall
-    image: lscr.io/linuxserver/heimdall:latest
+    image: lscr.io/linuxserver/heimdall:latest@sha256:234aa35d4abb76ca6c41845218a633e7af21ad14bbe3e292c8e251abf5d5b3fb
     restart: unless-stopped
     environment:
       - PUID=${PUID}
@@ -61,7 +61,7 @@ services:
 ### MEDIA
   plex:
     container_name: plex
-    image: lscr.io/linuxserver/plex:latest
+    image: lscr.io/linuxserver/plex:latest@sha256:1dd281365d61fb76fd4474ba67e36ec94d2e8dbc67a8032ba10731c01701c97e
     restart: unless-stopped
     network_mode: host
     deploy:
@@ -84,7 +84,7 @@ services:
 
   tautulli:
     container_name: tautulli
-    image: lscr.io/linuxserver/tautulli:latest
+    image: lscr.io/linuxserver/tautulli:latest@sha256:cb2226d9ab37f084d67a396e3c79059ca7d0fa7e1b2e6f1a473472af2afa7b12
     restart: unless-stopped
     environment:
       - PUID=${PUID}
@@ -97,7 +97,7 @@ services:
 
   overseerr:
     container_name: overseerr
-    image: sctx/overseerr:latest
+    image: sctx/overseerr:latest@sha256:4f38f58d68555004d3f487a4c5cbe2823e6a0942d946a25a2d9391d8492240a4
     restart: unless-stopped
     environment:
       - LOG_LEVEL=debug
@@ -109,7 +109,7 @@ services:
 
   radarr:
     container_name: radarr
-    image: ghcr.io/hotio/radarr:latest
+    image: ghcr.io/hotio/radarr:latest@sha256:49b96245cc456e07628009dc0d28827679e0e94b30eadcd1ab7d59feaede8a42
     restart: unless-stopped
     environment:
       - PUID=${PUID}
@@ -123,7 +123,7 @@ services:
 
   sonarr:
     container_name: sonarr
-    image: ghcr.io/hotio/sonarr:latest
+    image: ghcr.io/hotio/sonarr:latest@sha256:4705417494fbd9b74b917477dcb467911365c7d153be4e3f794ac9db728bee49
     restart: unless-stopped
     environment:
       - PUID=${PUID}
@@ -138,7 +138,7 @@ services:
 
   bazarr:
     container_name: bazarr
-    image: ghcr.io/hotio/bazarr:latest
+    image: ghcr.io/hotio/bazarr:latest@sha256:b59c52b873304de1acb24006062227d2b37694d4bb161791f2daf7da1f01ac75
     restart: unless-stopped
     environment:
       - PUID=${PUID}
@@ -152,7 +152,7 @@ services:
 
   qbittorrent:
     container_name: qbittorrent
-    image: lscr.io/linuxserver/qbittorrent:latest
+    image: lscr.io/linuxserver/qbittorrent:latest@sha256:a68c4cfb7b07c39cf3f13e7f1d23d333c1e4a60304d37bc1eec7af3eacfe12d5
     restart: unless-stopped
     environment:
       - PUID=${PUID}
@@ -169,7 +169,7 @@ services:
 
   prowlarr:
     container_name: prowlarr
-    image: lscr.io/linuxserver/prowlarr:develop
+    image: lscr.io/linuxserver/prowlarr:develop@sha256:aeb303a86be70dfb3fa5508bbd9399f5123b74f73b00b91eb76eb34efe4c5650
     restart: unless-stopped
     environment:
       - PUID=${PUID}
@@ -182,7 +182,7 @@ services:
 
   flaresolverr:
     container_name: flaresolverr
-    image: ghcr.io/flaresolverr/flaresolverr:latest
+    image: ghcr.io/flaresolverr/flaresolverr:latest@sha256:7962759d99d7e125e108e0f5e7f3cdbcd36161776d058d1d9b7153b92ef1af9e
     restart: unless-stopped
     environment:
       - LOG_LEVEL=${LOG_LEVEL:-info}
@@ -195,7 +195,7 @@ services:
 ### HOME AUTOMATION
   homeassistant:
     container_name: homeassistant
-    image: ghcr.io/home-assistant/home-assistant:stable
+    image: ghcr.io/home-assistant/home-assistant:stable@sha256:75ef6851d2e48d366764cdb6b569b7ad8be77dcc8e0d1b9aa508ac90e42d4c58
     restart: unless-stopped
     network_mode: host
     privileged: true
@@ -210,7 +210,7 @@ services:
 
   mosquitto:
     container_name: mosquitto
-    image: eclipse-mosquitto:latest
+    image: eclipse-mosquitto:latest@sha256:077fe4ff4c49df1e860c98335c77dda08360629e0e2a718147027e4db3eace9d
     restart: unless-stopped
     environment:
       - PUID=${PUID}
@@ -226,7 +226,7 @@ services:
 
   zigbee2mqtt:
     container_name: zigbee2mqtt
-    image: ghcr.io/koenkk/zigbee2mqtt
+    image: ghcr.io/koenkk/zigbee2mqtt:latest@sha256:163e7351430a95d550d5b1bb958527edc1eff115eb013ca627f3545a192e853f
     restart: unless-stopped
     network_mode: host
     privileged: true
@@ -241,7 +241,7 @@ services:
 ### NETWORK
   adguardhome:
     container_name: adguardhome
-    image: adguard/adguardhome:latest
+    image: adguard/adguardhome:latest@sha256:92929135ced2554aaf94706f766a98ad348f211df61b0704e2db7e8498cc00b7
     restart: unless-stopped
     ports:
       - "53:53/tcp"
