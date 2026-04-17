@@ -1,0 +1,252 @@
+### MONITORING
+services:
+  glances:
+    container_name: glances
+    image: nicolargo/glances:ubuntu-latest-full
+    restart: unless-stopped
+    pid: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /:/rootfs:ro
+    environment:
+      - "GLANCES_OPT=-w"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    ports:
+      - 61208-61209:61208-61209
+
+  dozzle:
+    container_name: dozzle
+    image: amir20/dozzle:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 9999:8080
+
+### DASHBOARD
+  heimdall:
+    container_name: heimdall
+    image: lscr.io/linuxserver/heimdall:latest
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /docker/appdata/heimdall:/config
+    ports:
+      - 80:80
+      - 443:443
+
+### MEDIA
+  plex:
+    container_name: plex
+    image: lscr.io/linuxserver/plex:latest
+    restart: unless-stopped
+    network_mode: host
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - VERSION=docker
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
+    volumes:
+      - /docker/appdata/plex:/config
+      - /mnt/storage/data/media/movies:/movies
+      - /mnt/storage/data/media/series:/tv
+
+  tautulli:
+    container_name: tautulli
+    image: lscr.io/linuxserver/tautulli:latest
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /docker/appdata/tautulli:/config
+    ports:
+      - 8181:8181
+
+  overseerr:
+    container_name: overseerr
+    image: sctx/overseerr:latest
+    restart: unless-stopped
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=${TZ}
+    ports:
+      - 5055:5055
+    volumes:
+      - /docker/appdata/overseerr:/app/config
+
+  radarr:
+    container_name: radarr
+    image: ghcr.io/hotio/radarr:latest
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /docker/appdata/radarr:/config
+      - /mnt/storage/data:/data
+    ports:
+      - 7878:7878
+
+  sonarr:
+    container_name: sonarr
+    image: ghcr.io/hotio/sonarr:latest
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=022
+      - TZ=${TZ}
+    volumes:
+      - /docker/appdata/sonarr:/config
+      - /mnt/storage/data:/data
+    ports:
+      - 8989:8989
+
+  bazarr:
+    container_name: bazarr
+    image: ghcr.io/hotio/bazarr:latest
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /docker/appdata/bazarr:/config
+      - /mnt/storage/data/media:/data/media
+    ports:
+      - 6767:6767
+
+  qbittorrent:
+    container_name: qbittorrent
+    image: lscr.io/linuxserver/qbittorrent:latest
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - WEBUI_PORT=8088
+    volumes:
+      - /docker/appdata/qbittorrent:/config
+      - /mnt/storage/data/torrents:/downloads
+    ports:
+      - 8088:8088
+      - 6881:6881
+      - 6881:6881/udp
+
+  prowlarr:
+    container_name: prowlarr
+    image: lscr.io/linuxserver/prowlarr:develop
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /docker/appdata/prowlarr:/config
+    ports:
+      - 9696:9696
+
+  flaresolverr:
+    container_name: flaresolverr
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    restart: unless-stopped
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ=${TZ}
+    ports:
+      - "${PORT:-8191}:8191"
+
+### HOME AUTOMATION
+  homeassistant:
+    container_name: homeassistant
+    image: ghcr.io/home-assistant/home-assistant:stable
+    restart: unless-stopped
+    network_mode: host
+    privileged: true
+    volumes:
+      - /docker/appdata/homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    environment:
+      DISABLE_JEMALLOC: 1
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+
+  mosquitto:
+    container_name: mosquitto
+    image: eclipse-mosquitto:latest
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /docker/appdata/mosquitto:/mosquitto/config/
+      - /docker/appdata/mosquitto/data:/mosquitto/data
+      - /docker/appdata/mosquitto/log:/mosquitto/log
+    ports:
+      - 1883:1883
+      - 9001:9001
+
+  zigbee2mqtt:
+    container_name: zigbee2mqtt
+    image: ghcr.io/koenkk/zigbee2mqtt
+    restart: unless-stopped
+    network_mode: host
+    privileged: true
+    depends_on:
+      - mosquitto
+    volumes:
+      - /docker/appdata/zigbee2mqtt:/app/data
+      - /run/udev:/run/udev:ro
+    environment:
+      - TZ=${TZ}
+
+### NETWORK
+  adguardhome:
+    container_name: adguardhome
+    image: adguard/adguardhome:latest
+    restart: unless-stopped
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+      - "8068:68/udp"
+      - "8080:80/tcp"
+      - "8443:443/tcp"
+      - "8443:443/udp"
+      - "3000:3000/tcp"
+    volumes:
+      - /docker/appdata/adguard-config:/opt/adguardhome/conf
+      - /docker/appdata/adguard-work:/opt/adguardhome/work
+
+### VOLUMES
+volumes:
+  adguard-config:
+    name: adguard-config
+    driver: local
+  adguard-work:
+    name: adguard-work
+    driver: local
