@@ -29,6 +29,20 @@ services:
     ports:
       - 9999:8080
 
+  wud:
+    container_name: wud
+    image: getwud/wud:latest
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+      - WUD_WATCHER_LOCAL_CRON=0 */6 * * *
+      - WUD_TRIGGER_DOCKER_LOCAL_AUTO=false
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /docker/appdata/wud:/store
+    ports:
+      - 3001:3000
+
 ### DASHBOARD
   heimdall:
     container_name: heimdall
