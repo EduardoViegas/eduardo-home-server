@@ -1,0 +1,25 @@
+services:
+  adguardhome:
+    container_name: adguardhome
+    image: adguard/adguardhome:latest@sha256:92929135ced2554aaf94706f766a98ad348f211df61b0704e2db7e8498cc00b7
+    restart: unless-stopped
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+      - "8068:68/udp"
+      - "8080:80/tcp"
+      - "8443:443/tcp"
+      - "8443:443/udp"
+      - "3000:3000/tcp"
+    volumes:
+      - /docker/appdata/adguard-config:/opt/adguardhome/conf
+      - /docker/appdata/adguard-work:/opt/adguardhome/work
+
+volumes:
+  adguard-config:
+    name: adguard-config
+    driver: local
+  adguard-work:
+    name: adguard-work
+    driver: local

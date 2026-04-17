@@ -1,0 +1,14 @@
+services:
+  heimdall:
+    container_name: heimdall
+    image: lscr.io/linuxserver/heimdall:latest@sha256:234aa35d4abb76ca6c41845218a633e7af21ad14bbe3e292c8e251abf5d5b3fb
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /docker/appdata/heimdall:/config
+    ports:
+      - 80:80
+      - 443:443

@@ -1,0 +1,43 @@
+services:
+  glances:
+    container_name: glances
+    image: nicolargo/glances:ubuntu-latest-full@sha256:e17096f1ba0407d0589bec7976ba6ac2f1b6fea886bb090d59090c9244930eae
+    restart: unless-stopped
+    pid: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /:/rootfs:ro
+    environment:
+      - "GLANCES_OPT=-w"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    ports:
+      - 61208-61209:61208-61209
+
+  dozzle:
+    container_name: dozzle
+    image: amir20/dozzle:latest@sha256:0df89c904da71e94a0c9ed3c89a890f01488321b5f10ac1e0c0bedcead9af6e4
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 9999:8080
+
+  wud:
+    container_name: wud
+    image: getwud/wud:latest@sha256:2df7cafa0fc84cdd66ad976163abc5390fa5995e0b5788a90e6a5303706bc21a
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+      - WUD_WATCHER_LOCAL_CRON=0 */6 * * *
+      - WUD_TRIGGER_DOCKER_LOCAL_AUTO=false
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /docker/appdata/wud:/store
+    ports:
+      - 3001:3000
