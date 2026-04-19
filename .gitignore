@@ -1,2 +1,9 @@
 .env
 *.log
+*.bak
+*.swp
+*.tmp
+*~
+.DS_Store
+plans/
+/tmp/
