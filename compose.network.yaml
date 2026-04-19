@@ -15,11 +15,3 @@ services:
     volumes:
       - /docker/appdata/adguard-config:/opt/adguardhome/conf
       - /docker/appdata/adguard-work:/opt/adguardhome/work
-
-volumes:
-  adguard-config:
-    name: adguard-config
-    driver: local
-  adguard-work:
-    name: adguard-work
-    driver: local
