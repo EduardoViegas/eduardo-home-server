@@ -212,7 +212,10 @@ If the password file on the HDD is lost/corrupt, use the fallback password above
 cd ~/docker-compose
 docker compose pull          # pulls the exact digests pinned in compose files
 docker compose up -d
-docker compose ps            # expect 17 containers, all "Up" or "healthy"
+docker compose ps            # expect 20 containers, all "Up" or "healthy"
+                             # NOTE: beszel-agent will be Down on a clean restore
+                             # until BESZEL_HUB_KEY is populated in .env (see Beszel
+                             # verification section)
 ```
 
 Watch logs for any container that fails to start:
@@ -341,6 +344,20 @@ After `docker compose up -d`, walk through each service. Order matters: network 
 - [ ] All three UIs load
 - [ ] WUD dashboard shows all pinned containers with current digests
 
+### Beszel hub (`:8090`) + agent (host network, `:45876`)
+- [ ] Hub UI loads at `http://<server-ip>:8090`, login works (admin restored from backup)
+- [ ] System "eduardo-ubuntu-server" shows green/connected (agent reachable)
+- [ ] CPU / RAM / disk / network history graphs populated
+- [ ] Nvidia GPU metrics visible (Plex transcoder)
+- [ ] Container resource panel lists all running services
+- [ ] If agent is stopped (KEY missing): set `BESZEL_HUB_KEY` in `.env` from the value shown in **Hub UI → Add System → docker run snippet**, then `docker compose up -d beszel-agent`
+
+### Uptime Kuma (`:3011`)
+- [ ] UI loads at `http://<server-ip>:3011`, login works
+- [ ] All configured monitors show green/up
+- [ ] Notification channel test passes (push reaches phone)
+- [ ] Status page (if configured) loads
+
 ---
 
 ## Secret rotation (post-recovery)
@@ -352,6 +369,8 @@ Anything in `/docker/appdata` was in the backup. Assume the backup is compromise
 - qBittorrent WebUI password
 - Mosquitto password file (`/docker/appdata/mosquitto/passwd`)
 - AdGuard admin password
+- Beszel hub admin password
+- Uptime Kuma admin password + notification channel tokens
 - Any API keys inside Sonarr / Radarr / Bazarr / Prowlarr (Settings → General → API Key → Reset)
 - Overseerr API key
 
@@ -390,4 +409,4 @@ Run a **full** dry-run drill every 6 months to validate this runbook end-to-end.
 
 ---
 
-*Last updated: 2026-04-19. Validate against reality every 6 months or after major changes.*
+*Last updated: 2026-04-19 (Beszel + Uptime Kuma added). Validate against reality every 6 months or after major changes.*
