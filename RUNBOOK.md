@@ -212,7 +212,7 @@ If the password file on the HDD is lost/corrupt, use the fallback password above
 cd ~/docker-compose
 docker compose pull          # pulls the exact digests pinned in compose files
 docker compose up -d
-docker compose ps            # expect 16 containers, all "Up" or "healthy"
+docker compose ps            # expect 17 containers, all "Up" or "healthy"
 ```
 
 Watch logs for any container that fails to start:
@@ -287,6 +287,7 @@ After `docker compose up -d`, walk through each service. Order matters: network 
 - [ ] Admin UI loads at `http://<server-ip>:3000` (or your Heimdall tile)
 - [ ] `dig @<server-ip> google.com` resolves
 - [ ] Router still points DNS to server IP (check router config, not the server)
+- [ ] Query log retention = 24h (**Settings → General → Query log & Statistics**) — restored from `/docker/appdata/adguard-config/AdGuardHome.yaml`
 
 ### Home Assistant (host network, `:8123`)
 - [ ] UI loads, login works
@@ -309,6 +310,8 @@ After `docker compose up -d`, walk through each service. Order matters: network 
 - [ ] Server shows as "claimed" — if not, re-claim via plex.tv/claim
 - [ ] Libraries visible (movies / series)
 - [ ] Hardware transcoding works: start a transcode, check `nvidia-smi` shows Plex process
+- [ ] `/transcode` is tmpfs inside the container: `docker exec plex df -hT /transcode` → expect `tmpfs  4.0G`
+- [ ] Plex UI → **Settings → Transcoder → Transcoder temporary directory** = `/transcode` (should persist from backup; re-set if empty — without it the live transcoder writes to SSD)
 - [ ] Router port-forward for remote access: verify 32400 still forwarded
 - [ ] **Rotate Plex token** on plex.tv/account/security — the old one is in the backup
 
@@ -387,4 +390,4 @@ Run a **full** dry-run drill every 6 months to validate this runbook end-to-end.
 
 ---
 
-*Last updated: 2026-04-17. Validate against reality every 6 months or after major changes.*
+*Last updated: 2026-04-19. Validate against reality every 6 months or after major changes.*
