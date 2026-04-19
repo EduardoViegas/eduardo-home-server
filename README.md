@@ -12,8 +12,11 @@ docker compose up -d
 ### Monitoring
 | Service | Port | Description |
 |---------|------|-------------|
-| Glances | 61208 | System resource monitor |
 | Dozzle | 9999 | Docker log viewer |
+| WUD | 3001 | Image update tracker |
+| Beszel (hub) | 8090 | Host + container metrics with history |
+| Beszel (agent) | 45876 | Metrics agent (host network) |
+| Uptime Kuma | 3011 | Service availability pings + alerts |
 
 ### Dashboard
 | Service | Port | Description |

@@ -340,8 +340,8 @@ After `docker compose up -d`, walk through each service. Order matters: network 
 ### Heimdall (`:80` / `:443`)
 - [ ] Dashboard loads, tiles reach their services
 
-### Glances / Dozzle / WUD (monitoring)
-- [ ] All three UIs load
+### Dozzle / WUD (monitoring)
+- [ ] Both UIs load
 - [ ] WUD dashboard shows all pinned containers with current digests
 
 ### Beszel hub (`:8090`) + agent (host network, `:45876`)
