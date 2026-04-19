@@ -41,3 +41,38 @@ services:
       - /docker/appdata/wud:/store
     ports:
       - 3001:3000
+
+  beszel:
+    container_name: beszel
+    image: henrygd/beszel:latest@sha256:a849ad80814b6a1a3be665304dcace5d4854b3bed7bde4dd1227e8ce1b82d477
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - /docker/appdata/beszel:/beszel_data
+    ports:
+      - 8090:8090
+
+  beszel-agent:
+    container_name: beszel-agent
+    image: henrygd/beszel-agent:latest@sha256:8874e2c53f9de5e063a6a80d6b617e20fa593ac5dc4eb4c6ce1f912f510f38f8
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - TZ=${TZ}
+      - LISTEN=45876
+      - KEY=${BESZEL_HUB_KEY:-}
+    volumes:
+      - /docker/appdata/beszel-agent:/var/lib/beszel-agent
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  uptime-kuma:
+    container_name: uptime-kuma
+    image: louislam/uptime-kuma:1@sha256:3d632903e6af34139a37f18055c4f1bfd9b7205ae1138f1e5e8940ddc1d176f9
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - /docker/appdata/uptime-kuma:/app/data
+    ports:
+      - 3011:3001
