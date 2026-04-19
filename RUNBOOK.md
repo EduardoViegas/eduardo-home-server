@@ -212,7 +212,7 @@ If the password file on the HDD is lost/corrupt, use the fallback password above
 cd ~/docker-compose
 docker compose pull          # pulls the exact digests pinned in compose files
 docker compose up -d
-docker compose ps            # expect 20 containers, all "Up" or "healthy"
+docker compose ps            # expect 19 containers, all "Up" or "healthy"
                              # NOTE: beszel-agent will be Down on a clean restore
                              # until BESZEL_HUB_KEY is populated in .env (see Beszel
                              # verification section)
@@ -409,4 +409,4 @@ Run a **full** dry-run drill every 6 months to validate this runbook end-to-end.
 
 ---
 
-*Last updated: 2026-04-19 (Beszel + Uptime Kuma added). Validate against reality every 6 months or after major changes.*
+*Last updated: 2026-04-19 (Glances removed; replaced by Beszel). Validate against reality every 6 months or after major changes.*
