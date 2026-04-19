@@ -17,10 +17,13 @@ services:
       - VERSION=docker
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
+      - TMPDIR=/transcode
     volumes:
       - /docker/appdata/plex:/config
       - /mnt/storage/data/media/movies:/movies
       - /mnt/storage/data/media/series:/tv
+    tmpfs:
+      - /transcode:size=4g,mode=1777
 
   tautulli:
     container_name: tautulli
