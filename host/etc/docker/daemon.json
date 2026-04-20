@@ -10,5 +10,9 @@
             "args": [],
             "path": "nvidia-container-runtime"
         }
-    }
+    },
+    "dns": [
+        "192.168.68.253",
+        "1.1.1.1"
+    ]
 }
