@@ -12,6 +12,7 @@ services:
       - HOMEPAGE_VAR_ADGUARD_PASSWORD=${ADGUARD_PASSWORD:-}
     volumes:
       - /docker/appdata/homepage:/app/config
+      - /mnt/storage:/mnt/storage:ro
     ports:
       - 80:3000
     depends_on:
