@@ -1,7 +1,7 @@
 services:
   homepage:
     container_name: homepage
-    image: ghcr.io/gethomepage/homepage:latest@sha256:88cd42ea66137f1731c5e1bef844888f0087e40ee20fdfb29146b3f77e3477ca
+    image: ghcr.io/gethomepage/homepage:latest@sha256:cc84f2f5eb3c7734353701ccbaa24ed02dacb0d119114e50e4251e2005f3990a
     restart: unless-stopped
     environment:
       - PUID=${PUID}
@@ -19,7 +19,7 @@ services:
 
   dockerproxy:
     container_name: dockerproxy
-    image: ghcr.io/tecnativa/docker-socket-proxy:latest@sha256:16bbd1209742dc156656caf35b18e51edfab62c24d29bf4c8d2353b785cefa1f
+    image: ghcr.io/tecnativa/docker-socket-proxy:latest@sha256:1f3a6f303320723d199d2316a3e82b2e2685d86c275d5e3deeaf182573b47476
     restart: unless-stopped
     environment:
       - CONTAINERS=1
