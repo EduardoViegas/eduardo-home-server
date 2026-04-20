@@ -28,7 +28,6 @@ docker compose up -d
 |---------|------|-------------|
 | Plex | host | Media server |
 | Tautulli | 8181 | Plex analytics |
-| Overseerr | 5055 | Media request manager |
 | Radarr | 7878 | Movie manager |
 | Sonarr | 8989 | TV show manager |
 | Bazarr | 6767 | Subtitle manager |

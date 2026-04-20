@@ -38,18 +38,6 @@ services:
     ports:
       - 8181:8181
 
-  overseerr:
-    container_name: overseerr
-    image: sctx/overseerr:latest@sha256:4f38f58d68555004d3f487a4c5cbe2823e6a0942d946a25a2d9391d8492240a4
-    restart: unless-stopped
-    environment:
-      - LOG_LEVEL=debug
-      - TZ=${TZ}
-    ports:
-      - 5055:5055
-    volumes:
-      - /docker/appdata/overseerr:/app/config
-
   radarr:
     container_name: radarr
     image: ghcr.io/hotio/radarr:latest@sha256:49b96245cc456e07628009dc0d28827679e0e94b30eadcd1ab7d59feaede8a42

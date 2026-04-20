@@ -296,9 +296,9 @@ After `docker compose up -d`, walk through each service. Order matters: network 
 - [ ] Router port-forward for remote access: verify 32400 still forwarded
 - [ ] **Rotate Plex token** on plex.tv/account/security — the old one is in the backup
 
-### Tautulli (`:8181`), Overseerr (`:5055`)
-- [ ] UIs load
-- [ ] Both show Plex as connected
+### Tautulli (`:8181`)
+- [ ] UI loads
+- [ ] Shows Plex as connected
 
 ### Sonarr (`:8989`), Radarr (`:7878`), Bazarr (`:6767`), Prowlarr (`:9696`)
 - [ ] UIs load
@@ -350,7 +350,6 @@ Anything in `/docker/appdata` was in the backup. Assume the backup is compromise
 - Beszel hub admin password
 - Uptime Kuma admin password + notification channel tokens
 - Any API keys inside Sonarr / Radarr / Bazarr / Prowlarr (Settings → General → API Key → Reset)
-- Overseerr API key
 
 Restic password itself (`/mnt/storage/backups/.restic-password`) — rotate with `restic -r ... key passwd`, then update the password file and your password manager entry.
 
