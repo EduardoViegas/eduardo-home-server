@@ -225,22 +225,26 @@ docker compose logs -f <service-name>
 
 ### Step 10: Restore host config from repo
 
-Shell dotfiles, fstab, Docker daemon config, restic script, and its systemd units all live under `host/` in this repo (mirror of real filesystem paths). Put them back:
+Host-level config lives under `host/` in this repo (mirror of real paths). Files that are safe to symlink get symlinked (single source of truth — edit the repo copy and it's live). `fstab` stays a real file for boot safety; `daemon.json` stays a real file for early-boot Docker safety.
 
 ```bash
 cd ~/docker-compose
 
-# User dotfiles
-cp host/home/.bashrc host/home/.bash_aliases host/home/.tmux.conf ~/
+# Symlink user dotfiles (safe: bash / tmux follow symlinks fine)
+ln -sf ~/docker-compose/host/home/.bashrc      ~/.bashrc
+ln -sf ~/docker-compose/host/home/.bash_aliases ~/.bash_aliases
+ln -sf ~/docker-compose/host/home/.tmux.conf   ~/.tmux.conf
 
-# System config (fstab was already handled in Step 5; daemon.json is new here)
-sudo cp host/etc/docker/daemon.json /etc/docker/daemon.json
-sudo systemctl restart docker   # picks up log rotation + live-restore
+# Symlink restic script + systemd units (systemd handles symlinks correctly)
+sudo ln -sf ~/docker-compose/host/usr/local/bin/restic-backup-appdata.sh /usr/local/bin/restic-backup-appdata.sh
+sudo ln -sf ~/docker-compose/host/etc/systemd/system/restic-backup-appdata.service /etc/systemd/system/restic-backup-appdata.service
+sudo ln -sf ~/docker-compose/host/etc/systemd/system/restic-backup-appdata.timer   /etc/systemd/system/restic-backup-appdata.timer
 
-# Restic backup script + systemd units
-sudo cp host/usr/local/bin/restic-backup-appdata.sh /usr/local/bin/
-sudo chmod +x /usr/local/bin/restic-backup-appdata.sh
-sudo cp host/etc/systemd/system/restic-backup-appdata.{service,timer} /etc/systemd/system/
+# Mirror (copy) for boot-critical files — a symlink into /home/ risks early-boot breakage
+#   fstab is usually already done in Step 5; re-copy only if that step was skipped
+sudo cp host/etc/fstab               /etc/fstab
+sudo cp host/etc/docker/daemon.json  /etc/docker/daemon.json
+sudo systemctl restart docker        # picks up log rotation + live-restore
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now restic-backup-appdata.timer
@@ -248,6 +252,11 @@ systemctl list-timers restic-backup-appdata.timer   # verify "Next" shows tomorr
 ```
 
 Reminder: the restic password file itself (`/mnt/storage/backups/.restic-password`) is **not** in the repo. Restore it from your password manager before the next scheduled run, or the backup fails silently.
+
+#### Ongoing edits
+
+- **Symlinked files** (`.bashrc`, `.tmux.conf`, etc.): edit directly — `git status` shows the change immediately.
+- **Mirrored files** (`/etc/fstab`, `/etc/docker/daemon.json`): edit the real file, then `cp` into `host/etc/…` before committing. Rare by design.
 
 ---
 
