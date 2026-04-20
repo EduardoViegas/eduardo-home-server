@@ -1,4 +1,23 @@
 services:
+  traefik:
+    container_name: traefik
+    image: traefik:v3.6.13@sha256:34d5089d0b414945342848518b383f11f5b3a645504ed87b77ffeb9d683d0e48
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /docker/appdata/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - /docker/appdata/traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
+      - /docker/appdata/traefik/certs:/certs:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.dashboard.rule=Host(`traefik.home.lan`)
+      - traefik.http.routers.dashboard.entrypoints=websecure
+      - traefik.http.routers.dashboard.tls=true
+      - traefik.http.routers.dashboard.service=api@internal
+
   homepage:
     container_name: homepage
     image: ghcr.io/gethomepage/homepage:latest@sha256:cc84f2f5eb3c7734353701ccbaa24ed02dacb0d119114e50e4251e2005f3990a
@@ -7,14 +26,18 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
-      - HOMEPAGE_ALLOWED_HOSTS=192.168.68.253,localhost,home.local
+      - HOMEPAGE_ALLOWED_HOSTS=home.lan,192.168.68.253,localhost,100.84.60.92
       - HOMEPAGE_VAR_HA_TOKEN=${HA_TOKEN:-}
       - HOMEPAGE_VAR_ADGUARD_PASSWORD=${ADGUARD_PASSWORD:-}
     volumes:
       - /docker/appdata/homepage:/app/config
       - /mnt/storage:/mnt/storage:ro
-    ports:
-      - 80:3000
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.homepage.rule=Host(`home.lan`)
+      - traefik.http.routers.homepage.entrypoints=websecure
+      - traefik.http.routers.homepage.tls=true
+      - traefik.http.services.homepage.loadbalancer.server.port=3000
     depends_on:
       - dockerproxy
 
@@ -27,5 +50,6 @@ services:
       - SERVICES=1
       - TASKS=1
       - NETWORKS=1
+      - EVENTS=1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro

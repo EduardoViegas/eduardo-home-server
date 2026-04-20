@@ -21,8 +21,14 @@ docker compose up -d
 ### Dashboard
 | Service | Port | Description |
 |---------|------|-------------|
-| Homepage | 80 | Service dashboard with live widgets |
+| Traefik | 80 / 443 | Reverse proxy + TLS termination for all services |
+| Homepage | internal | Service dashboard with live widgets (reachable at `https://home.lan`) |
 | Docker Socket Proxy | internal | Read-only Docker API for Homepage auto-discovery |
+
+### Hostnames (via Traefik + AdGuard DNS rewrite for `*.home.lan`)
+`home.lan` · `plex.home.lan` · `tautulli.home.lan` · `radarr.home.lan` · `sonarr.home.lan` · `bazarr.home.lan` · `prowlarr.home.lan` · `qbit.home.lan` · `ha.home.lan` · `z2m.home.lan` · `adguard.home.lan` · `beszel.home.lan` · `kuma.home.lan` · `dozzle.home.lan` · `wud.home.lan` · `traefik.home.lan`
+
+TLS by mkcert — install `rootCA.pem` from `/root/mkcert-ca/` on any client that needs the green padlock. Works over Tailscale via split-DNS for `.home.lan` → `192.168.68.253`.
 
 ### Media
 | Service | Port | Description |

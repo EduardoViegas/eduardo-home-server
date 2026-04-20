@@ -7,6 +7,12 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 9999:8080
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.dozzle.rule=Host(`dozzle.home.lan`)
+      - traefik.http.routers.dozzle.entrypoints=websecure
+      - traefik.http.routers.dozzle.tls=true
+      - traefik.http.services.dozzle.loadbalancer.server.port=8080
 
   wud:
     container_name: wud
@@ -21,6 +27,12 @@ services:
       - /docker/appdata/wud:/store
     ports:
       - 3001:3000
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.wud.rule=Host(`wud.home.lan`)
+      - traefik.http.routers.wud.entrypoints=websecure
+      - traefik.http.routers.wud.tls=true
+      - traefik.http.services.wud.loadbalancer.server.port=3000
 
   beszel:
     container_name: beszel
@@ -32,6 +44,12 @@ services:
       - /docker/appdata/beszel:/beszel_data
     ports:
       - 8090:8090
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.beszel.rule=Host(`beszel.home.lan`)
+      - traefik.http.routers.beszel.entrypoints=websecure
+      - traefik.http.routers.beszel.tls=true
+      - traefik.http.services.beszel.loadbalancer.server.port=8090
 
   beszel-agent:
     container_name: beszel-agent
@@ -56,3 +74,9 @@ services:
       - /docker/appdata/uptime-kuma:/app/data
     ports:
       - 3011:3001
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.kuma.rule=Host(`kuma.home.lan`)
+      - traefik.http.routers.kuma.entrypoints=websecure
+      - traefik.http.routers.kuma.tls=true
+      - traefik.http.services.kuma.loadbalancer.server.port=3001
