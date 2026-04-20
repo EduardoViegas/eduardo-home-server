@@ -22,8 +22,8 @@ Target recovery time: **~2 hours** to a running stack, assuming hardware is repl
 |---|---|
 | OS | Ubuntu 22.04 (jammy), kernel 5.15.0-174, x86_64 |
 | Hostname | `eduardo-ubuntu-server` |
-| Docker | 20.10.17 (build 100c701) |
-| docker-compose-plugin | 2.40.3 (required for `include:` directive — do NOT install older) |
+| Docker | 29.4.0 (build daa0cb7) |
+| docker-compose-plugin | 5.1.3 (≥ 2.40.3 required for `include:` directive — do NOT install older) |
 | nvidia-container-toolkit | 1.17.5-1 (Plex GPU transcoding) |
 | mergerfs | 2.33.3-1 |
 | User/UID | `eduardoviegas` / 1000:1000 |
@@ -86,7 +86,7 @@ sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 sudo usermod -aG docker $USER
 newgrp docker   # or log out & back in
 
-docker --version             # expect >= 20.10.17
+docker --version             # expect >= 29.4.0
 docker compose version       # expect >= 2.40.3
 ```
 

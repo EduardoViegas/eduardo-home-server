@@ -1,0 +1,8 @@
+// Managed via ~/docker-compose/host/etc/apt/apt.conf.d/52unattended-upgrades-updates
+// Expand default policy to include the jammy-updates pocket (bug fixes / feature
+// updates), so they don't accumulate into a 150-package backlog. Reboot stays
+// manual — the server runs services and reboot timing is the user's call.
+Unattended-Upgrade::Allowed-Origins {
+    "${distro_id}:${distro_codename}-updates";
+};
+Unattended-Upgrade::Automatic-Reboot "false";
