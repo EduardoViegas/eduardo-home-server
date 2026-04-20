@@ -1,0 +1,10 @@
+[Unit]
+Description=Restic integrity check of /docker/appdata repo
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/restic-check-appdata.sh
+Nice=19
+IOSchedulingClass=idle
