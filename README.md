@@ -21,7 +21,8 @@ docker compose up -d
 ### Dashboard
 | Service | Port | Description |
 |---------|------|-------------|
-| Heimdall | 80 / 443 | Application dashboard |
+| Homepage | 80 | Service dashboard with live widgets |
+| Docker Socket Proxy | internal | Read-only Docker API for Homepage auto-discovery |
 
 ### Media
 | Service | Port | Description |

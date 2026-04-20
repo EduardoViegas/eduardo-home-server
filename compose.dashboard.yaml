@@ -1,14 +1,30 @@
 services:
-  heimdall:
-    container_name: heimdall
-    image: lscr.io/linuxserver/heimdall:latest@sha256:234aa35d4abb76ca6c41845218a633e7af21ad14bbe3e292c8e251abf5d5b3fb
+  homepage:
+    container_name: homepage
+    image: ghcr.io/gethomepage/homepage:latest@sha256:88cd42ea66137f1731c5e1bef844888f0087e40ee20fdfb29146b3f77e3477ca
     restart: unless-stopped
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
+      - HOMEPAGE_ALLOWED_HOSTS=192.168.68.253,localhost,home.local
+      - HOMEPAGE_VAR_HA_TOKEN=${HA_TOKEN:-}
+      - HOMEPAGE_VAR_ADGUARD_PASSWORD=${ADGUARD_PASSWORD:-}
     volumes:
-      - /docker/appdata/heimdall:/config
+      - /docker/appdata/homepage:/app/config
     ports:
-      - 80:80
-      - 443:443
+      - 80:3000
+    depends_on:
+      - dockerproxy
+
+  dockerproxy:
+    container_name: dockerproxy
+    image: ghcr.io/tecnativa/docker-socket-proxy:latest@sha256:16bbd1209742dc156656caf35b18e51edfab62c24d29bf4c8d2353b785cefa1f
+    restart: unless-stopped
+    environment:
+      - CONTAINERS=1
+      - SERVICES=1
+      - TASKS=1
+      - NETWORKS=1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
