@@ -223,62 +223,31 @@ Watch logs for any container that fails to start:
 docker compose logs -f <service-name>
 ```
 
-### Step 10: Reinstall the restic backup timer
+### Step 10: Restore host config from repo
 
-The backup script and systemd units are NOT in restic (they live under `/usr/local/bin` and `/etc/systemd/system`, not `/docker/appdata`). Recreate them:
+Shell dotfiles, fstab, Docker daemon config, restic script, and its systemd units all live under `host/` in this repo (mirror of real filesystem paths). Put them back:
 
 ```bash
-# 1. Backup script
-sudo tee /usr/local/bin/restic-backup-appdata.sh > /dev/null <<'EOF'
-#!/bin/bash
-set -euo pipefail
-export RESTIC_REPOSITORY=/mnt/storage/backups/restic-appdata
-export RESTIC_PASSWORD_FILE=/mnt/storage/backups/.restic-password
+cd ~/docker-compose
 
-restic backup \
-  --exclude '/docker/appdata/plex/Library/Application Support/Plex Media Server/Cache' \
-  --exclude '/docker/appdata/plex/Library/Application Support/Plex Media Server/Logs' \
-  --exclude '/docker/appdata/plex/Library/Application Support/Plex Media Server/Crash Reports' \
-  --exclude '/docker/appdata/plex/Library/Application Support/Plex Media Server/Diagnostics' \
-  --tag appdata \
-  /docker/appdata
+# User dotfiles
+cp host/home/.bashrc host/home/.bash_aliases host/home/.tmux.conf ~/
 
-restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 12 --tag appdata --prune
-EOF
+# System config (fstab was already handled in Step 5; daemon.json is new here)
+sudo cp host/etc/docker/daemon.json /etc/docker/daemon.json
+sudo systemctl restart docker   # picks up log rotation + live-restore
+
+# Restic backup script + systemd units
+sudo cp host/usr/local/bin/restic-backup-appdata.sh /usr/local/bin/
 sudo chmod +x /usr/local/bin/restic-backup-appdata.sh
-
-# 2. systemd service
-sudo tee /etc/systemd/system/restic-backup-appdata.service > /dev/null <<'EOF'
-[Unit]
-Description=Restic backup of /docker/appdata
-After=network-online.target
-Wants=network-online.target
-
-[Service]
-Type=oneshot
-ExecStart=/usr/local/bin/restic-backup-appdata.sh
-Nice=10
-IOSchedulingClass=idle
-EOF
-
-# 3. systemd timer
-sudo tee /etc/systemd/system/restic-backup-appdata.timer > /dev/null <<'EOF'
-[Unit]
-Description=Nightly restic backup of /docker/appdata
-
-[Timer]
-OnCalendar=*-*-* 03:00:00
-RandomizedDelaySec=30min
-Persistent=true
-
-[Install]
-WantedBy=timers.target
-EOF
+sudo cp host/etc/systemd/system/restic-backup-appdata.{service,timer} /etc/systemd/system/
 
 sudo systemctl daemon-reload
 sudo systemctl enable --now restic-backup-appdata.timer
 systemctl list-timers restic-backup-appdata.timer   # verify "Next" shows tomorrow 03:00
 ```
+
+Reminder: the restic password file itself (`/mnt/storage/backups/.restic-password`) is **not** in the repo. Restore it from your password manager before the next scheduled run, or the backup fails silently.
 
 ---
 
